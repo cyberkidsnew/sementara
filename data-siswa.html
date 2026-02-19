@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Siswa — Absensi Santri</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/data-siswa.css" />
+  <link rel="stylesheet" href="css/scan.css" />
+  <link rel="stylesheet" href="css/notif-popup.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ===== HEADER ===== -->
+    <header class="ds-header">
+      <button class="ds-header-back" onclick="history.back()" aria-label="Kembali">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="ds-header-title">Data Siswa</h1>
+      <button class="ds-header-action" aria-label="Tambah Siswa" id="btnAddSiswa">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      </button>
+    </header>
+
+    <!-- ===== SEARCH BAR ===== -->
+    <div class="ds-search-wrap">
+      <div class="ds-search">
+        <svg class="ds-search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" class="ds-search-input" placeholder="Cari nama atau NIS siswa..." id="searchInput" />
+      </div>
+    </div>
+
+    <!-- ===== STATS SUMMARY ===== -->
+    <div class="ds-stats">
+      <div class="ds-stat-item ds-stat-total">
+        <span class="ds-stat-number">0</span>
+        <span class="ds-stat-label">Total</span>
+      </div>
+      <div class="ds-stat-divider"></div>
+      <div class="ds-stat-item ds-stat-lk">
+        <span class="ds-stat-number">0</span>
+        <span class="ds-stat-label">Laki-laki</span>
+      </div>
+      <div class="ds-stat-divider"></div>
+      <div class="ds-stat-item ds-stat-pr">
+        <span class="ds-stat-number">0</span>
+        <span class="ds-stat-label">Perempuan</span>
+      </div>
+    </div>
+
+    <!-- ===== STUDENT LIST (rendered dynamically) ===== -->
+    <div class="ds-list" id="studentList"></div>
+
+    <!-- ===== EMPTY STATE ===== -->
+    <div class="ds-empty" id="emptyState" style="display: none;">
+      <div class="ds-empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </div>
+      <p class="ds-empty-text">Siswa tidak ditemukan</p>
+      <p class="ds-empty-sub">Coba cari dengan kata kunci lain</p>
+    </div>
+
+    <!-- ===== ADD / EDIT MODAL ===== -->
+    <div class="ds-modal-overlay" id="studentModalOverlay">
+      <div class="ds-modal">
+        <div class="ds-modal-header">
+          <h2 class="ds-modal-title" id="modalTitle">Tambah Siswa Baru</h2>
+          <button class="ds-modal-close" id="btnCloseModal" aria-label="Tutup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="ds-modal-body">
+          <!-- Form Error -->
+          <div class="ds-form-error" id="formError" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="formErrorText"></span>
+          </div>
+
+          <!-- Nama -->
+          <div class="ds-form-group">
+            <label class="ds-form-label" for="formNama">Nama Lengkap <span class="ds-required">*</span></label>
+            <input type="text" class="ds-form-input" id="formNama" placeholder="Masukkan nama lengkap" autocomplete="off" />
+          </div>
+
+          <!-- No. Registrasi (auto-generated, shown on edit) -->
+          <div class="ds-form-group" id="formNISGroup" style="display: none;">
+            <label class="ds-form-label">No. Registrasi</label>
+            <input type="text" class="ds-form-input" id="formNIS" readonly disabled style="opacity: 0.7; cursor: default;" />
+          </div>
+
+          <!-- Kelas -->
+          <div class="ds-form-group">
+            <label class="ds-form-label" for="formKelas">Kelas</label>
+            <select class="ds-form-select" id="formKelas">
+              <!-- Options akan diisi oleh JavaScript dari data kelas -->
+            </select>
+          </div>
+
+          <!-- Jenis Kelamin -->
+          <div class="ds-form-group">
+            <label class="ds-form-label" for="formKelamin">Jenis Kelamin</label>
+            <select class="ds-form-select" id="formKelamin">
+              <option value="L">Laki-laki</option>
+              <option value="P">Perempuan</option>
+            </select>
+          </div>
+
+          <!-- Status -->
+          <div class="ds-form-group">
+            <label class="ds-form-label" for="formStatus">Status</label>
+            <select class="ds-form-select" id="formStatus">
+              <option value="active">Aktif</option>
+              <option value="inactive">Tidak Aktif</option>
+            </select>
+          </div>
+        </div>
+        <div class="ds-modal-footer">
+          <button class="ds-btn ds-btn-secondary" id="btnCancelStudent">Batal</button>
+          <button class="ds-btn ds-btn-primary" id="btnSaveStudent">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STUDENT DETAIL MODAL ===== -->
+    <div class="ds-modal-overlay" id="detailModalOverlay">
+      <div class="ds-modal ds-modal-sm">
+        <div class="ds-modal-header">
+          <h2 class="ds-modal-title">Detail Siswa</h2>
+          <button class="ds-modal-close" id="btnCloseDetail" aria-label="Tutup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="ds-modal-body">
+          <div class="ds-detail-avatar-wrap">
+            <div class="ds-detail-avatar" id="detailAvatar"></div>
+            <div class="ds-detail-name" id="detailNama"></div>
+            <div class="ds-detail-status" id="detailStatus"></div>
+          </div>
+          <div class="ds-detail-list">
+            <div class="ds-detail-row">
+              <span class="ds-detail-label">No. Registrasi</span>
+              <span class="ds-detail-value" id="detailNIS"></span>
+            </div>
+            <div class="ds-detail-row">
+              <span class="ds-detail-label">Kelas</span>
+              <span class="ds-detail-value" id="detailKelas"></span>
+            </div>
+            <div class="ds-detail-row">
+              <span class="ds-detail-label">Jenis Kelamin</span>
+              <span class="ds-detail-value" id="detailKelamin"></span>
+            </div>
+          </div>
+        </div>
+        <div class="ds-modal-footer">
+          <button class="ds-btn ds-btn-secondary" id="btnCloseDetailFooter">Tutup</button>
+          <button class="ds-btn ds-btn-primary" id="btnEditFromDetail">Edit</button>
+          <button class="ds-btn ds-btn-danger" id="btnDeleteFromDetail">Hapus</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DELETE CONFIRMATION DIALOG ===== -->
+    <div class="ds-modal-overlay" id="deleteDialogOverlay">
+      <div class="ds-modal ds-modal-sm">
+        <div class="ds-modal-body ds-delete-body">
+          <div class="ds-delete-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </div>
+          <h3 class="ds-delete-title">Hapus Siswa?</h3>
+          <p class="ds-delete-text">Data <strong id="deleteStudentName"></strong> akan dihapus permanen dan tidak bisa dikembalikan.</p>
+        </div>
+        <div class="ds-modal-footer">
+          <button class="ds-btn ds-btn-secondary" id="btnCancelDelete">Batal</button>
+          <button class="ds-btn ds-btn-danger" id="btnConfirmDelete">Hapus</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="nav-tab-label">Beranda</span>
+      </a>
+      <a href="presensi.html" class="nav-tab active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14l2 2l4-4"/></svg>
+        <span class="nav-tab-label">Presensi</span>
+      </a>
+      <!-- Scan QR -->
+      <div class="nav-qr-wrap">
+        <a href="#" class="nav-qr-btn" aria-label="Scan QR Code">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2z"/><path d="M20 14h2v2h-2z"/><path d="M14 20h2v2h-2z"/><path d="M20 20h2v2h-2z"/><path d="M17 17h2v2h-2z"/></svg>
+        </a>
+        <span class="nav-qr-label">Scan</span>
+      </div>
+      <a href="pengumuman.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="nav-tab-label">Pengumuman</span>
+      </a>
+      <a href="akun.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        <span class="nav-tab-label">Akun</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script src="js/attendance-store.js"></script>
+  <script src="js/data-siswa.js"></script>
+  <script src="js/data-siswa-qr.js"></script>
+  <script src="js/notif-popup.js"></script>
+  <script src="js/scan.js"></script>
+</body>
+</html>

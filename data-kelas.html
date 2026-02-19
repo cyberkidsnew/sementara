@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Kelas — Absensi Santri</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/data-kelas.css" />
+  <link rel="stylesheet" href="css/scan.css" />
+  <link rel="stylesheet" href="css/notif-popup.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ===== HEADER ===== -->
+    <header class="dk-header">
+      <button class="dk-header-back" onclick="history.back()" aria-label="Kembali">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="dk-header-title">Data Kelas</h1>
+      <button class="dk-header-action" aria-label="Tambah Kelas" id="btnAddKelas">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </header>
+
+    <!-- ===== SUMMARY STATS ===== -->
+    <div class="dk-stats">
+      <div class="dk-stat-card">
+        <div class="dk-stat-icon dk-stat-icon-kelas">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="dk-stat-text">
+          <span class="dk-stat-value" id="statTotalKelas">0</span>
+          <span class="dk-stat-label">Total Kelas</span>
+        </div>
+      </div>
+      <div class="dk-stat-card">
+        <div class="dk-stat-icon dk-stat-icon-santri">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="dk-stat-text">
+          <span class="dk-stat-value" id="statTotalSantri">0</span>
+          <span class="dk-stat-label">Total Santri</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CLASS LIST (rendered dynamically) ===== -->
+    <div class="dk-list" id="kelasList"></div>
+
+    <!-- ===== EMPTY STATE ===== -->
+    <div class="dk-empty" id="emptyState" style="display: none;">
+      <div class="dk-empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <p class="dk-empty-text">Belum ada data kelas</p>
+      <p class="dk-empty-sub">Tambahkan kelas baru dengan tombol + di atas</p>
+    </div>
+
+    <!-- ===== ADD / EDIT MODAL ===== -->
+    <div class="dk-modal-overlay" id="kelasModalOverlay">
+      <div class="dk-modal">
+        <div class="dk-modal-header">
+          <h2 class="dk-modal-title" id="modalTitle">Tambah Kelas Baru</h2>
+          <button class="dk-modal-close" id="btnCloseModal" aria-label="Tutup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="dk-modal-body">
+          <!-- Form Error -->
+          <div class="dk-form-error" id="formError" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="formErrorText"></span>
+          </div>
+
+          <!-- Nama Kelas -->
+          <div class="dk-form-group">
+            <label class="dk-form-label" for="formNama">Nama Kelas <span class="dk-required">*</span></label>
+            <input type="text" class="dk-form-input" id="formNama" placeholder="Contoh: VII-A" autocomplete="off" />
+          </div>
+
+          <!-- Wali Kelas -->
+          <div class="dk-form-group">
+            <label class="dk-form-label" for="formWali">Wali Kelas <span class="dk-required">*</span></label>
+            <input type="text" class="dk-form-input" id="formWali" placeholder="Contoh: Ust. Abdullah" autocomplete="off" />
+          </div>
+
+        </div>
+        <div class="dk-modal-footer">
+          <button class="dk-btn dk-btn-secondary" id="btnCancelKelas">Batal</button>
+          <button class="dk-btn dk-btn-primary" id="btnSaveKelas">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DETAIL MODAL ===== -->
+    <div class="dk-modal-overlay" id="detailModalOverlay">
+      <div class="dk-modal dk-modal-sm">
+        <div class="dk-modal-header">
+          <h2 class="dk-modal-title">Detail Kelas</h2>
+          <button class="dk-modal-close" id="btnCloseDetail" aria-label="Tutup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="dk-modal-body">
+          <div class="dk-detail-list">
+            <div class="dk-detail-row">
+              <span class="dk-detail-label">Nama Kelas</span>
+              <span class="dk-detail-value" id="detailNama"></span>
+            </div>
+            <div class="dk-detail-row">
+              <span class="dk-detail-label">Registrasi</span>
+              <span class="dk-detail-value" id="detailRegistrasi"></span>
+            </div>
+            <div class="dk-detail-row">
+              <span class="dk-detail-label">Wali Kelas</span>
+              <span class="dk-detail-value" id="detailWali"></span>
+            </div>
+            <div class="dk-detail-row">
+              <span class="dk-detail-label">Jumlah Santri</span>
+              <span class="dk-detail-value" id="detailJumlah"></span>
+            </div>
+          </div>
+        </div>
+        <div class="dk-modal-footer">
+          <button class="dk-btn dk-btn-secondary" id="btnCloseDetailFooter">Tutup</button>
+          <button class="dk-btn dk-btn-primary" id="btnEditFromDetail">Edit</button>
+          <button class="dk-btn dk-btn-danger" id="btnDeleteFromDetail">Hapus</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DELETE CONFIRMATION DIALOG ===== -->
+    <div class="dk-modal-overlay" id="deleteDialogOverlay">
+      <div class="dk-modal dk-modal-sm">
+        <div class="dk-modal-body dk-delete-body">
+          <div class="dk-delete-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </div>
+          <h3 class="dk-delete-title">Hapus Kelas?</h3>
+          <p class="dk-delete-text">Kelas <strong id="deleteKelasName"></strong> akan dihapus permanen dan tidak bisa dikembalikan.</p>
+        </div>
+        <div class="dk-modal-footer">
+          <button class="dk-btn dk-btn-secondary" id="btnCancelDelete">Batal</button>
+          <button class="dk-btn dk-btn-danger" id="btnConfirmDelete">Hapus</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="nav-tab-label">Beranda</span>
+      </a>
+      <a href="presensi.html" class="nav-tab active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14l2 2l4-4"/></svg>
+        <span class="nav-tab-label">Presensi</span>
+      </a>
+      <div class="nav-qr-wrap">
+        <a href="#" class="nav-qr-btn" aria-label="Scan QR Code">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2z"/><path d="M20 14h2v2h-2z"/><path d="M14 20h2v2h-2z"/><path d="M20 20h2v2h-2z"/><path d="M17 17h2v2h-2z"/></svg>
+        </a>
+        <span class="nav-qr-label">Scan</span>
+      </div>
+      <a href="pengumuman.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="nav-tab-label">Pengumuman</span>
+      </a>
+      <a href="akun.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        <span class="nav-tab-label">Akun</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script src="js/attendance-store.js"></script>
+  <script src="js/data-kelas.js"></script>
+  <script src="js/notif-popup.js"></script>
+  <script src="js/scan.js"></script>
+</body>
+</html>

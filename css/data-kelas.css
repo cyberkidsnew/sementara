@@ -1,0 +1,706 @@
+/* ============================================
+   Absensi Santri - Data Kelas Page
+   Class directory with CRUD
+   ============================================ */
+
+/* ============================================
+   Header
+   ============================================ */
+
+.dk-header {
+  height: 56px;
+  background: #1B2838;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  gap: var(--space-3);
+}
+
+.dk-header-back {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--color-text-white);
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.dk-header-back:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dk-header-back svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dk-header-title {
+  flex: 1;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-white);
+}
+
+.dk-header-action {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--color-text-white);
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.dk-header-action:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dk-header-action svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ============================================
+   Summary Stats
+   ============================================ */
+
+.dk-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin: var(--space-4) var(--space-4) 0;
+}
+
+.dk-stat-card {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast);
+}
+
+.dk-stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.dk-stat-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dk-stat-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dk-stat-icon-kelas {
+  background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+  color: #6366F1;
+}
+
+.dk-stat-icon-santri {
+  background: linear-gradient(135deg, #F0FDFA, #CCFBF1);
+  color: var(--color-primary);
+}
+
+.dk-stat-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dk-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+}
+
+.dk-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ============================================
+   Class List
+   ============================================ */
+
+.dk-list {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ============================================
+   Class Card
+   ============================================ */
+
+.dk-card {
+  display: flex;
+  background: var(--color-bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  border: 1.5px solid transparent;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: dk-card-in 0.4s ease forwards;
+}
+
+@keyframes dk-card-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dk-card:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.dk-card:active {
+  transform: scale(0.99);
+}
+
+/* Colored left accent stripe */
+.dk-card-accent {
+  width: 5px;
+  min-height: 100%;
+  flex-shrink: 0;
+}
+
+.dk-accent-indigo { background: linear-gradient(180deg, #6366F1, #818CF8); }
+.dk-accent-emerald { background: linear-gradient(180deg, #10B981, #34D399); }
+.dk-accent-amber { background: linear-gradient(180deg, #F59E0B, #FBBF24); }
+.dk-accent-rose { background: linear-gradient(180deg, #F43F5E, #FB7185); }
+.dk-accent-violet { background: linear-gradient(180deg, #8B5CF6, #A78BFA); }
+.dk-accent-cyan { background: linear-gradient(180deg, #06B6D4, #22D3EE); }
+
+/* Card body */
+.dk-card-body {
+  flex: 1;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dk-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.dk-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dk-card-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.dk-card-reg {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.dk-card-reg svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.dk-card-wali {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.dk-card-wali svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Badge */
+.dk-card-badge {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.dk-badge-indigo { background: #EEF2FF; color: #6366F1; }
+.dk-badge-emerald { background: #ECFDF5; color: #10B981; }
+.dk-badge-amber { background: #FFFBEB; color: #D97706; }
+.dk-badge-rose { background: #FFF1F2; color: #F43F5E; }
+.dk-badge-violet { background: #F5F3FF; color: #8B5CF6; }
+.dk-badge-cyan { background: #ECFEFF; color: #06B6D4; }
+
+/* Bottom section */
+.dk-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.dk-card-kode {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-bg-input);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.dk-card-actions {
+  display: none;
+  gap: var(--space-2);
+}
+
+.dk-action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-input);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dk-edit-btn {
+  color: var(--color-primary);
+}
+
+.dk-edit-btn:hover {
+  background: var(--color-primary);
+  color: var(--color-text-white);
+}
+
+.dk-delete-btn {
+  color: var(--color-error);
+}
+
+.dk-delete-btn:hover {
+  background: var(--color-error);
+  color: var(--color-text-white);
+}
+
+.dk-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.dk-empty {
+  text-align: center;
+  padding: var(--space-10) var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.dk-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-4);
+  background: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.dk-empty-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.dk-empty-text {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.dk-empty-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   Modal Overlay
+   ============================================ */
+
+.dk-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  padding: var(--space-4);
+}
+
+.dk-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dk-modal {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-2xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-xl);
+  transform: scale(0.92) translateY(20px);
+  transition: transform var(--transition-normal);
+  overflow: hidden;
+}
+
+.dk-modal-overlay.active .dk-modal {
+  transform: scale(1) translateY(0);
+}
+
+.dk-modal-sm {
+  max-width: 360px;
+}
+
+/* Modal Header */
+.dk-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+}
+
+.dk-modal-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.dk-modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dk-modal-close:hover {
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+}
+
+/* Modal Body */
+.dk-modal-body {
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+/* Modal Footer */
+.dk-modal-footer {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-light);
+}
+
+/* ============================================
+   Form Elements
+   ============================================ */
+
+.dk-form-group {
+  margin-bottom: var(--space-4);
+}
+
+.dk-form-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.dk-required {
+  color: var(--color-error);
+}
+
+.dk-form-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--space-4);
+  background: var(--color-bg-input);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.dk-form-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+.dk-form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Form Error */
+.dk-form-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  color: var(--color-error);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+
+.dk-form-error svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.dk-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dk-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-white);
+}
+
+.dk-btn-primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.dk-btn-secondary {
+  background: var(--color-bg-input);
+  color: var(--color-text-secondary);
+}
+
+.dk-btn-secondary:hover {
+  background: var(--color-border);
+}
+
+.dk-btn-danger {
+  background: var(--color-error);
+  color: var(--color-text-white);
+}
+
+.dk-btn-danger:hover {
+  background: #DC2626;
+}
+
+/* ============================================
+   Detail Modal
+   ============================================ */
+
+.dk-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dk-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dk-detail-row:last-child {
+  border-bottom: none;
+}
+
+.dk-detail-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.dk-detail-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   Delete Dialog
+   ============================================ */
+
+.dk-delete-body {
+  text-align: center;
+  padding: var(--space-6) var(--space-5) var(--space-4) !important;
+}
+
+.dk-delete-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--space-4);
+  background: #FEF2F2;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-error);
+}
+
+.dk-delete-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.dk-delete-text {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Toast Notification
+   ============================================ */
+
+.dk-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1B2838;
+  color: var(--color-text-white);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-xl);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 2000;
+  white-space: nowrap;
+}
+
+.dk-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dk-toast svg {
+  color: #34D399;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Desktop Enhancement
+   ============================================ */
+
+@media (min-width: 481px) {
+  body { background: #E2E8F0; }
+  .app-container { margin-top: 0; border-radius: 0; }
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    margin-top: var(--space-6);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    min-height: calc(100vh - var(--space-12));
+  }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengumuman — Absensi Santri</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/pengumuman.css" />
+  <link rel="stylesheet" href="css/scan.css" />
+  <link rel="stylesheet" href="css/notif-popup.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ===== GREETING CARD ===== -->
+    <div class="greeting-card">
+      <div class="greeting-left">
+        <div class="greeting-avatar">A</div>
+        <div class="greeting-text">
+          <span class="greeting-label">Selamat Pagi!</span>
+          <span class="greeting-name">Ahmad Ramadhan</span>
+        </div>
+      </div>
+      <div class="greeting-actions">
+        <div class="notification-badge" id="notifBadge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="badge-count" id="badgeCount">3</span>
+        </div>
+        <button class="greeting-settings" aria-label="Pengaturan">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0a2.34 2.34 0 0 0 3.319 1.915a2.34 2.34 0 0 1 2.33 4.033a2.34 2.34 0 0 0 0 3.831a2.34 2.34 0 0 1-2.33 4.033a2.34 2.34 0 0 0-3.319 1.915a2.34 2.34 0 0 1-4.659 0a2.34 2.34 0 0 0-3.32-1.915a2.34 2.34 0 0 1-2.33-4.033a2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== PAGE TITLE ===== -->
+    <div class="page-title-section">
+      <h1 class="page-title">Pengumuman</h1>
+      <button class="pg-add-btn" id="btnAddPengumuman" aria-label="Tambah Pengumuman">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <!-- ===== FILTER TABS ===== -->
+    <div class="filter-tabs-wrapper">
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="semua">
+          Semua <span class="tab-count" id="countSemua">0</span>
+        </button>
+        <button class="filter-tab" data-filter="penting">
+          Penting <span class="tab-count" id="countPenting">0</span>
+        </button>
+        <button class="filter-tab" data-filter="info">
+          Info <span class="tab-count" id="countInfo">0</span>
+        </button>
+        <button class="filter-tab" data-filter="kegiatan">
+          Kegiatan <span class="tab-count" id="countKegiatan">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== ANNOUNCEMENT LIST (rendered dynamically) ===== -->
+    <div class="announcement-list" id="announcementList"></div>
+
+    <!-- ===== EMPTY STATE ===== -->
+    <div class="announcement-empty" id="emptyState" style="display: none;">
+      <div class="announcement-empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      </div>
+      <p class="announcement-empty-text">Belum ada pengumuman</p>
+      <p class="announcement-empty-sub">Pengumuman baru akan muncul di sini</p>
+    </div>
+
+    <!-- ===== ADD / EDIT MODAL ===== -->
+    <div class="pg-modal-overlay" id="pgModalOverlay">
+      <div class="pg-modal">
+        <div class="pg-modal-header">
+          <h2 class="pg-modal-title" id="pgModalTitle">Tambah Pengumuman</h2>
+          <button class="pg-modal-close" id="btnCloseModal" aria-label="Tutup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="pg-modal-body">
+          <!-- Form Error -->
+          <div class="pg-form-error" id="formError" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="formErrorText"></span>
+          </div>
+
+          <!-- Judul -->
+          <div class="pg-form-group">
+            <label class="pg-form-label" for="formJudul">Judul <span class="pg-required">*</span></label>
+            <input type="text" class="pg-form-input" id="formJudul" placeholder="Masukkan judul pengumuman" autocomplete="off" />
+          </div>
+
+          <!-- Tipe -->
+          <div class="pg-form-group">
+            <label class="pg-form-label" for="formTipe">Kategori <span class="pg-required">*</span></label>
+            <select class="pg-form-select" id="formTipe">
+              <option value="penting">Penting</option>
+              <option value="info">Info</option>
+              <option value="kegiatan">Kegiatan</option>
+            </select>
+          </div>
+
+          <!-- Isi -->
+          <div class="pg-form-group">
+            <label class="pg-form-label" for="formIsi">Isi Pengumuman <span class="pg-required">*</span></label>
+            <textarea class="pg-form-textarea" id="formIsi" rows="5" placeholder="Tulis isi pengumuman..."></textarea>
+          </div>
+        </div>
+        <div class="pg-modal-footer">
+          <button class="pg-btn pg-btn-secondary" id="btnCancelPg">Batal</button>
+          <button class="pg-btn pg-btn-primary" id="btnSavePg">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DELETE CONFIRMATION DIALOG ===== -->
+    <div class="pg-modal-overlay" id="deleteDialogOverlay">
+      <div class="pg-modal pg-modal-sm">
+        <div class="pg-modal-body pg-delete-body">
+          <div class="pg-delete-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </div>
+          <h3 class="pg-delete-title">Hapus Pengumuman?</h3>
+          <p class="pg-delete-text">Pengumuman "<strong id="deletePgName"></strong>" akan dihapus permanen.</p>
+        </div>
+        <div class="pg-modal-footer">
+          <button class="pg-btn pg-btn-secondary" id="btnCancelDelete">Batal</button>
+          <button class="pg-btn pg-btn-danger" id="btnConfirmDelete">Hapus</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="pg-toast" id="pgToast">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span id="pgToastText">Berhasil!</span>
+    </div>
+
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="nav-tab-label">Beranda</span>
+      </a>
+      <a href="presensi.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14l2 2l4-4"/></svg>
+        <span class="nav-tab-label">Presensi</span>
+      </a>
+      <div class="nav-qr-wrap">
+        <a href="#" class="nav-qr-btn" aria-label="Scan QR Code">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2z"/><path d="M20 14h2v2h-2z"/><path d="M14 20h2v2h-2z"/><path d="M20 20h2v2h-2z"/><path d="M17 17h2v2h-2z"/></svg>
+        </a>
+        <span class="nav-qr-label">Scan</span>
+      </div>
+      <a href="pengumuman.html" class="nav-tab active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="nav-tab-label">Pengumuman</span>
+      </a>
+      <a href="akun.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        <span class="nav-tab-label">Akun</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/greeting.js"></script>
+  <script src="js/attendance-store.js"></script>
+  <script src="js/pengumuman.js"></script>
+  <script src="js/notif-popup.js"></script>
+  <script src="js/scan.js"></script>
+</body>
+</html>

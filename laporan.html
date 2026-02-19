@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan — Absensi Santri</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/laporan.css" />
+  <link rel="stylesheet" href="css/scan.css" />
+  <link rel="stylesheet" href="css/notif-popup.css" />
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ===== HEADER ===== -->
+    <header class="lp-header">
+      <button class="lp-header-back" onclick="history.back()" aria-label="Kembali">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="lp-header-title">Laporan</h1>
+      <button class="lp-header-action" id="btnExport" aria-label="Ekspor">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </header>
+
+    <!-- ===== CATEGORY TABS ===== -->
+    <div class="lp-category-wrap">
+      <div class="lp-category-tabs">
+        <button class="lp-category-tab active" data-category="kehadiran">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Kehadiran
+        </button>
+        <button class="lp-category-tab" data-category="infaq">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2.5"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+          Infaq
+        </button>
+        <button class="lp-category-tab" data-category="siswa">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Data Siswa
+        </button>
+        <button class="lp-category-tab" data-category="kelas">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Data Kelas
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: KEHADIRAN (Attendance)                            -->
+    <!-- ============================================================ -->
+    <div class="lp-content-section active" id="sectionKehadiran">
+
+      <!-- Date Range Tabs -->
+      <div class="lp-tabs-wrap">
+        <div class="lp-tabs">
+          <button class="lp-tab active" data-range="mingguan" id="tabMingguan">Mingguan</button>
+          <button class="lp-tab" data-range="bulanan" id="tabBulanan">Bulanan</button>
+        </div>
+        <span class="lp-date-label" id="lpDateRange">10 - 14 Feb 2026</span>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="lp-stats">
+        <div class="lp-stat-card lp-stat-hadir">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statTotalHadir">87%</span>
+          <span class="lp-stat-label">Rata-rata Hadir</span>
+        </div>
+        <div class="lp-stat-card lp-stat-terlambat">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statTerlambat">5</span>
+          <span class="lp-stat-label">Total Terlambat</span>
+        </div>
+        <div class="lp-stat-card lp-stat-alpha">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statAlpha">2</span>
+          <span class="lp-stat-label">Total Alpha</span>
+        </div>
+      </div>
+
+      <!-- Attendance Chart -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Grafik Kehadiran
+          </h2>
+        </div>
+        <div class="lp-chart" id="lpChart">
+          <div class="lp-chart-bar-wrap">
+            <div class="lp-chart-bar" style="--bar-height: 85%;"><span class="lp-chart-value">85%</span></div>
+            <span class="lp-chart-label">Sen</span>
+          </div>
+          <div class="lp-chart-bar-wrap">
+            <div class="lp-chart-bar" style="--bar-height: 92%;"><span class="lp-chart-value">92%</span></div>
+            <span class="lp-chart-label">Sel</span>
+          </div>
+          <div class="lp-chart-bar-wrap">
+            <div class="lp-chart-bar" style="--bar-height: 78%;"><span class="lp-chart-value">78%</span></div>
+            <span class="lp-chart-label">Rab</span>
+          </div>
+          <div class="lp-chart-bar-wrap">
+            <div class="lp-chart-bar" style="--bar-height: 95%;"><span class="lp-chart-value">95%</span></div>
+            <span class="lp-chart-label">Kam</span>
+          </div>
+          <div class="lp-chart-bar-wrap">
+            <div class="lp-chart-bar lp-chart-bar--today" style="--bar-height: 88%;"><span class="lp-chart-value">88%</span></div>
+            <span class="lp-chart-label lp-chart-label--today">Jum</span>
+          </div>
+        </div>
+        <div class="lp-chart-legend">
+          <span class="lp-legend-item"><span class="lp-legend-dot lp-legend-hadir"></span> Hadir</span>
+          <span class="lp-legend-item"><span class="lp-legend-dot lp-legend-today"></span> Hari Ini</span>
+        </div>
+      </div>
+
+      <!-- Status Distribution -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            Distribusi Status
+          </h2>
+        </div>
+        <div class="lp-distribution">
+          <div class="lp-dist-item">
+            <div class="lp-dist-header"><span class="lp-dist-dot lp-dist-hadir"></span><span class="lp-dist-name">Hadir</span><span class="lp-dist-count">35</span></div>
+            <div class="lp-dist-bar-track"><div class="lp-dist-bar lp-dist-bar-hadir" style="width: 87%;"></div></div>
+          </div>
+          <div class="lp-dist-item">
+            <div class="lp-dist-header"><span class="lp-dist-dot lp-dist-izin"></span><span class="lp-dist-name">Izin</span><span class="lp-dist-count">2</span></div>
+            <div class="lp-dist-bar-track"><div class="lp-dist-bar lp-dist-bar-izin" style="width: 5%;"></div></div>
+          </div>
+          <div class="lp-dist-item">
+            <div class="lp-dist-header"><span class="lp-dist-dot lp-dist-sakit"></span><span class="lp-dist-name">Sakit</span><span class="lp-dist-count">1</span></div>
+            <div class="lp-dist-bar-track"><div class="lp-dist-bar lp-dist-bar-sakit" style="width: 3%;"></div></div>
+          </div>
+          <div class="lp-dist-item">
+            <div class="lp-dist-header"><span class="lp-dist-dot lp-dist-alpha"></span><span class="lp-dist-name">Alpha</span><span class="lp-dist-count">2</span></div>
+            <div class="lp-dist-bar-track"><div class="lp-dist-bar lp-dist-bar-alpha" style="width: 5%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-Student Recap -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Rekap Per Santri
+          </h2>
+        </div>
+        <div class="lp-table-wrap">
+          <table class="lp-table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th class="lp-th-center">H</th>
+                <th class="lp-th-center">I</th>
+                <th class="lp-th-center">S</th>
+                <th class="lp-th-center">A</th>
+                <th class="lp-th-center">%</th>
+              </tr>
+            </thead>
+            <tbody id="lpTableBody">
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #6366F1, #818CF8);">AR</span>Ahmad Ramadhan</td>
+                <td class="lp-td-center lp-td-hadir">5</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-persen">100%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #0D9488, #2DD4BF);">MF</span>Muhammad Fauzan</td>
+                <td class="lp-td-center lp-td-hadir">4</td><td class="lp-td-center">1</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-persen">80%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #F59E0B, #FBBF24);">AZ</span>Aisyah Zahra</td>
+                <td class="lp-td-center lp-td-hadir">5</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-persen">100%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #EC4899, #F472B6);">NK</span>Nur Khadijah</td>
+                <td class="lp-td-center lp-td-hadir">3</td><td class="lp-td-center">0</td><td class="lp-td-center">1</td><td class="lp-td-center lp-td-alpha">1</td><td class="lp-td-center lp-td-persen">60%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #8B5CF6, #A78BFA);">IA</span>Ibrahim Al-Farisi</td>
+                <td class="lp-td-center lp-td-hadir">5</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-persen">100%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #84CC16, #A3E635);">BH</span>Bilal Husain</td>
+                <td class="lp-td-center lp-td-hadir">4</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-alpha">1</td><td class="lp-td-center lp-td-persen">80%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #EF4444, #F87171);">HM</span>Hafidz Mubarok</td>
+                <td class="lp-td-center lp-td-hadir">5</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-persen">100%</td>
+              </tr>
+              <tr>
+                <td class="lp-td-name"><span class="lp-td-avatar" style="background: linear-gradient(135deg, #0EA5E9, #38BDF8);">FA</span>Fatimah Azzahra</td>
+                <td class="lp-td-center lp-td-hadir">4</td><td class="lp-td-center">1</td><td class="lp-td-center">0</td><td class="lp-td-center">0</td><td class="lp-td-center lp-td-persen">80%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Export WhatsApp -->
+      <div class="lp-export-wrap">
+        <button class="lp-export-btn" id="btnExportWA">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Kirim Laporan via WhatsApp
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: INFAQ                                             -->
+    <!-- ============================================================ -->
+    <div class="lp-content-section" id="sectionInfaq">
+
+      <!-- Infaq Summary Stats -->
+      <div class="lp-stats lp-stats-2col">
+        <div class="lp-stat-card lp-stat-infaq-total">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2.5"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statInfaqTotal">Rp 0</span>
+          <span class="lp-stat-label">Total Terkumpul</span>
+        </div>
+        <div class="lp-stat-card lp-stat-infaq-count">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statInfaqCount">0</span>
+          <span class="lp-stat-label">Transaksi</span>
+        </div>
+        <div class="lp-stat-card lp-stat-infaq-tunai">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statInfaqTunai">0</span>
+          <span class="lp-stat-label">Tunai</span>
+        </div>
+        <div class="lp-stat-card lp-stat-infaq-transfer">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statInfaqTransfer">0</span>
+          <span class="lp-stat-label">Transfer</span>
+        </div>
+      </div>
+
+      <!-- Infaq Distribution Chart -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Distribusi Pembayaran
+          </h2>
+        </div>
+        <div class="lp-distribution">
+          <div class="lp-dist-item">
+            <div class="lp-dist-header"><span class="lp-dist-dot" style="background:#16A34A;"></span><span class="lp-dist-name">Tunai</span><span class="lp-dist-count" id="distInfaqTunai">0</span></div>
+            <div class="lp-dist-bar-track"><div class="lp-dist-bar" id="distBarInfaqTunai" style="width:0%; background:linear-gradient(90deg,#16A34A,#4ADE80);"></div></div>
+          </div>
+          <div class="lp-dist-item">
+            <div class="lp-dist-header"><span class="lp-dist-dot" style="background:#3B82F6;"></span><span class="lp-dist-name">Transfer</span><span class="lp-dist-count" id="distInfaqTransfer">0</span></div>
+            <div class="lp-dist-bar-track"><div class="lp-dist-bar" id="distBarInfaqTransfer" style="width:0%; background:linear-gradient(90deg,#3B82F6,#60A5FA);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Infaq Per-Student Table -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Riwayat Infaq
+          </h2>
+        </div>
+        <div class="lp-table-wrap">
+          <table class="lp-table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th class="lp-th-center">Jumlah</th>
+                <th class="lp-th-center">Tipe</th>
+                <th class="lp-th-center">Tanggal</th>
+              </tr>
+            </thead>
+            <tbody id="lpInfaqTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: DATA SISWA                                        -->
+    <!-- ============================================================ -->
+    <div class="lp-content-section" id="sectionSiswa">
+
+      <!-- Siswa Summary Stats -->
+      <div class="lp-stats lp-stats-2col">
+        <div class="lp-stat-card lp-stat-siswa-total">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statSiswaTotal">0</span>
+          <span class="lp-stat-label">Total Siswa</span>
+        </div>
+        <div class="lp-stat-card lp-stat-siswa-aktif">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statSiswaAktif">0</span>
+          <span class="lp-stat-label">Aktif</span>
+        </div>
+        <div class="lp-stat-card lp-stat-siswa-lk">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statSiswaLK">0</span>
+          <span class="lp-stat-label">Laki-laki</span>
+        </div>
+        <div class="lp-stat-card lp-stat-siswa-pr">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statSiswaPR">0</span>
+          <span class="lp-stat-label">Perempuan</span>
+        </div>
+      </div>
+
+      <!-- Siswa Distribution per Kelas -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            Distribusi Per Kelas
+          </h2>
+        </div>
+        <div class="lp-distribution" id="lpSiswaDistribution"></div>
+      </div>
+
+      <!-- Siswa Full Table -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Daftar Siswa
+          </h2>
+        </div>
+        <div class="lp-table-wrap">
+          <table class="lp-table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th class="lp-th-center">Kelas</th>
+                <th class="lp-th-center">JK</th>
+                <th class="lp-th-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="lpSiswaTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: DATA KELAS                                        -->
+    <!-- ============================================================ -->
+    <div class="lp-content-section" id="sectionKelas">
+
+      <!-- Kelas Summary Stats -->
+      <div class="lp-stats lp-stats-2col-half">
+        <div class="lp-stat-card lp-stat-kelas-total">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statKelasTotal">0</span>
+          <span class="lp-stat-label">Total Kelas</span>
+        </div>
+        <div class="lp-stat-card lp-stat-kelas-santri">
+          <div class="lp-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <span class="lp-stat-value" id="statKelasSantri">0</span>
+          <span class="lp-stat-label">Total Santri</span>
+        </div>
+      </div>
+
+      <!-- Kelas Distribution -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Jumlah Santri Per Kelas
+          </h2>
+        </div>
+        <div class="lp-distribution" id="lpKelasDistribution"></div>
+      </div>
+
+      <!-- Kelas Full Table -->
+      <div class="lp-section-card">
+        <div class="lp-section-header">
+          <h2 class="lp-section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Daftar Kelas
+          </h2>
+        </div>
+        <div class="lp-table-wrap">
+          <table class="lp-table">
+            <thead>
+              <tr>
+                <th>Nama Kelas</th>
+                <th class="lp-th-center">Wali Kelas</th>
+                <th class="lp-th-center">Santri</th>
+              </tr>
+            </thead>
+            <tbody id="lpKelasTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="nav-tab-label">Beranda</span>
+      </a>
+      <a href="presensi.html" class="nav-tab active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14l2 2l4-4"/></svg>
+        <span class="nav-tab-label">Presensi</span>
+      </a>
+      <div class="nav-qr-wrap">
+        <a href="#" class="nav-qr-btn" aria-label="Scan QR Code">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2z"/><path d="M20 14h2v2h-2z"/><path d="M14 20h2v2h-2z"/><path d="M20 20h2v2h-2z"/><path d="M17 17h2v2h-2z"/></svg>
+        </a>
+        <span class="nav-qr-label">Scan</span>
+      </div>
+      <a href="pengumuman.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="nav-tab-label">Pengumuman</span>
+      </a>
+      <a href="akun.html" class="nav-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        <span class="nav-tab-label">Akun</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script src="js/attendance-store.js"></script>
+  <script src="js/laporan.js"></script>
+  <script src="js/notif-popup.js"></script>
+  <script src="js/scan.js"></script>
+</body>
+</html>
